@@ -15,7 +15,7 @@
     <header class="header">
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
-                <a class="navbar-brand" href="index.html"><img src="/static/images/logo.png" alt="logo" class="logo" height="40px" width="180px"></a>
+                <a class="navbar-brand" href="{% url 'home' %}"><img src="/static/images/logo.png" alt="logo" class="logo" height="40px" width="180px"></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -44,24 +44,24 @@
             <div class="paste-button">
                 <button class="button">C &nbsp; ▼</button>
                 <div class="dropdown-content">
-                    <a id="top" href="#">Quiz</a>
-                    <a id="middle" href="#">Fill in the blanks</a>
+                    <a id="top" href="{% url 'quiz' %}">Quiz</a>
+                    <a id="middle" href="{% url 'fill_latest' %}">Fill in the blanks</a>
                     <a id="bottom" href="#">Debug</a>
                 </div>
             </div>
             <div class="paste-button">
                 <button class="button">Python &nbsp; ▼</button>
                 <div class="dropdown-content">
-                    <a id="top" href="#">Quiz</a>
-                    <a id="middle" href="#">Fill in the blanks</a>
+                    <a id="top" href="{% url 'quiz' %}">Quiz</a>
+                    <a id="middle" href="{% url 'fill_latest' %}">Fill in the blanks</a>
                     <a id="bottom" href="#">Debug</a>
                 </div>
             </div>
             <div class="paste-button">
                 <button class="button">Java &nbsp; ▼</button>
                 <div class="dropdown-content">
-                    <a id="top" href="#">Quiz</a>
-                    <a id="middle" href="#">Fill in the blanks</a>
+                    <a id="top" href="{% url 'quiz' %}">Quiz</a>
+                    <a id="middle" href="{% url 'fill_latest' %}">Fill in the blanks</a>
                     <a id="bottom" href="#">Debug</a>
                 </div>
             </div>

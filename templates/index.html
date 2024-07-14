@@ -25,8 +25,8 @@
         <div class="feature-item">
             <div class="feature-section">
                 <h3>C</h3>
-                <button onclick="window.location.href='c.html'">Quiz</button>
-                <button onclick="window.location.href='fill.html'">Fill in the blanks</button>
+                <button onclick="window.location.href='{% url 'quiz' %}'">Quiz</button>
+                <button onclick="window.location.href='{% url 'fill_latest' %}'">Fill in the blanks</button>
                 <button onclick="window.location.href='debug.html'">Debug</button>
             </div>
         </div>
@@ -47,6 +47,7 @@
             </div>
         </div>
     </section>
+    
     <section id="cta" class="cta">
         <h2>Ready to Join?</h2>
         <button class="c-button c-button--gooey" onclick="window.location.href='register.html'"> Sign up now

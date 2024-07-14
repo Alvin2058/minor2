@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'fill.apps.ExercisesConfig',
-    'account.apps.AccountConfig',
     'quiz.apps.QuizConfig',
     'management.apps.ManagementConfig',
+    'login.apps.LoginConfig',
 ]
 
 MIDDLEWARE = [
