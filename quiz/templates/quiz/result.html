@@ -1,29 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
 {% include "header.html" %}
 
-{% block body %}
 <div class="container mt-5 mb-5">
-  <h1 class="text-center">
-    Result
-  </h1>
-  <table class="table">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Total Questions</th>
-      <th scope="col">Correct</th>
-      <th scope="col">Total Marks</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for result in results %}
-    <tr>
-      <th scope="row">{{ forloop.counter }}</th>
-      <td>{{ result.total }}</td>
-      <td>{{ result.got }}</td>
-      <td>{{ result.got }}/{{ result.total }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <h1 class="text-center">Quiz Results</h1>
+  
+  <div class="mb-3">
+    <h3>Marks Obtained: {{ mark.got }} / {{ mark.total }}</h3>
+  </div>
+
+  <div class="mb-5">
+    <h2>Correct Answers:</h2>
+    <ul>
+      {% for answer in correct_answers %}
+        <li>{{ answer.question }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="mb-5">
+    <h2>Incorrect Answers:</h2>
+    <ul>
+      {% for answer in incorrect_answers %}
+        <li>{{ answer.question }} (Correct Answer: {{ answer.get_correct_option_display }})</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <a href="{% url 'quiz' %}" class="btn btn-primary">Take Another Quiz</a>
 </div>
+
 {% endblock %}

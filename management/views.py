@@ -9,7 +9,7 @@ from quiz.models import Mark, Question
 from os.path import join
 
 # Create your views here.
-@method_decorator(staff_member_required, name="dispatch")
+#@method_decorator(staff_member_required, name="dispatch")
 class Manage(View):
     def get(self, request):
         panel_options = {
