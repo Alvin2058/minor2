@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'quiz.apps.QuizConfig',
     'management.apps.ManagementConfig',
     'login.apps.LoginConfig',
+    'compiler.apps.CompilerConfig',
 ]
 
 MIDDLEWARE = [

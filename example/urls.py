@@ -11,4 +11,5 @@ urlpatterns = [
     path("quiz/", include("quiz.urls")),
     path("management/", include("management.urls")),
     path("login/", include("login.urls")),
+    path('compiler/', include('compiler.urls')),
 ]
