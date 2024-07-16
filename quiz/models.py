@@ -1,3 +1,4 @@
+#quiz models.py
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -10,6 +11,7 @@ class Question(models.Model):
     correct_option = models.CharField(max_length=1, blank=False)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     verified = models.BooleanField(default=False)
+    c_answer = models.CharField(max_length=250, blank=False) 
 
     # Define choices for subject field
     SUBJECT_CHOICES = [

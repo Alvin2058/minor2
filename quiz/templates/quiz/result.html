@@ -1,34 +1,56 @@
-{% extends 'base.html' %}
+{% include 'header.html' %}
 
 {% block content %}
-{% include "header.html" %}
+<div class="container-fluid mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h1 class="mb-4">Quiz Results</h1>
+            
+            <div class="mb-4">
+                <p>Your score: <span class="font-weight-bold">{{ mark.got }}</span> / {{ mark.total }}</p>
+            </div>
+            
+            <!-- Correct Answers -->
+            <div class="mb-4">
+                <h2>Correct Answers:</h2>
+                {% if correct_answers %}
+                    <ul class="list-group">
+                    {% for answer in correct_answers %}
+                        <li class="list-group-item bg-success text-white">
+                            <p class="mb-1"><strong>Question:</strong> {{ answer.question.question }}</p>
+                            <p class="mb-1"><strong>Your Answer:</strong> <span class="text-white">{{ answer.selected_option }}</span></p>
+                            <p><strong>Correct Answer:</strong> <span class="text-white">{{ answer.question.c_answer }}</span></p>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No correct answers</p>
+                {% endif %}
+            </div>
 
-<div class="container mt-5 mb-5">
-  <h1 class="text-center">Quiz Results</h1>
-  
-  <div class="mb-3">
-    <h3>Marks Obtained: {{ mark.got }} / {{ mark.total }}</h3>
-  </div>
-
-  <div class="mb-5">
-    <h2>Correct Answers:</h2>
-    <ul>
-      {% for answer in correct_answers %}
-        <li>{{ answer.question }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-
-  <div class="mb-5">
-    <h2>Incorrect Answers:</h2>
-    <ul>
-      {% for answer in incorrect_answers %}
-        <li>{{ answer.question }} (Correct Answer: {{ answer.get_correct_option_display }})</li>
-      {% endfor %}
-    </ul>
-  </div>
-
-  <a href="{% url 'quiz' %}" class="btn btn-primary">Take Another Quiz</a>
+            <!-- Incorrect Answers -->
+            <div>
+                <h2>Incorrect Answers:</h2>
+                {% if incorrect_answers %}
+                    <ul class="list-group">
+                    {% for answer in incorrect_answers %}
+                        <li class="list-group-item bg-danger text-white">
+                            <p class="mb-1"><strong>Question:</strong> {{ answer.question.question }}</p>
+                            <p class="mb-1"><strong>Your Answer:</strong> <span class="text-white">{{ answer.selected_option }}</span></p>
+                            <p><strong>Correct Answer:</strong> <span class="text-white">{{ answer.question.c_answer }}</span></p>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No incorrect answers</p>
+                {% endif %}
+            </div>
+            <hr />
+            <div class="text-center mt-4">
+                <button class="btn btn-primary" onclick="window.location.href='{% url 'quiz' %}'">If you want to take another quiz <br>Click me</button>
+            </div>
+        </div>
+    
+    </div>
 </div>
-
 {% endblock %}

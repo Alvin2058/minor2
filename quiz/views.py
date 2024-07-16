@@ -1,3 +1,4 @@
+# quiz views
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Question, Mark
@@ -8,17 +9,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from random import sample
 
-# Create your views here.
-
 class Quiz(View):
     def get(self, request):
         subject = request.GET.get('subject', None)  # Get subject from query parameter
-        if subject:
-            questions = list(Question.objects.filter(verified=True, subject=subject))
-        else:
-            questions = list(Question.objects.filter(verified=True,subject=subject))
+        
+        questions = list(Question.objects.filter(subject=subject).order_by('?')[:10])
         
         random_questions = sample(questions, len(questions))
+        
         return render(
             request,
             "quiz/quiz.html",
@@ -26,36 +24,83 @@ class Quiz(View):
         )
 
     def post(self, request):
-        User = get_user_model()  # Retrieve the User model
-        user_instance = User.objects.get(username=request.user.username)  # Get the User instance
-
-        mark = Mark(user=user_instance, total=Question.objects.filter(verified=True).count())
+        user_instance = request.user  
+        subject = request.GET.get('subject', None)  # Get subject from query parameter
+        
+        
+        
+        total_questions = 10
+        
+        
+        mark = Mark(user=user_instance, total=total_questions)
         correct_answers = []
         incorrect_answers = []
+        got = 0  # Initialize got count
 
-        for i in range(1, mark.total + 1):
-            q_id = request.POST.get(f"q{i}", None)
-            selected_option = request.POST.get(f"q{i}o", None)
-            q = Question.objects.filter(pk=q_id, verified=True).first()
-            if q:
-                if selected_option == q.correct_option:
-                    mark.got += 1
-                    correct_answers.append(q)
-                else:
-                    incorrect_answers.append(q)
-
+        for key, value in request.POST.items():
+            if key.startswith('q_id_'):  # Check for keys starting with 'q_id_'
+                q_id = key.split('_')[-1]  # Extract question ID from key
+                selected_option = request.POST.get(f'q_answer_{q_id}')  # Get selected answer based on question ID
+                q = Question.objects.filter(pk=q_id, verified=True).first()
+                if q:
+                    selected_option_text = ""
+                    if selected_option == 'A':
+                        selected_option_text = q.option1
+                    elif selected_option == 'B':
+                        selected_option_text = q.option2
+                    elif selected_option == 'C':
+                        selected_option_text = q.option3
+                    elif selected_option == 'D':
+                        selected_option_text = q.option4
+                    if selected_option == q.correct_option:
+                        got += 1  # Increment got count for correct answers
+                        correct_answers.append({
+                            'question': q,
+                            'selected_option': selected_option_text,
+                            'correct_answer': q.c_answer,
+                        })
+                    else:
+                        incorrect_answers.append({
+                            'question': q,
+                            'selected_option': selected_option_text,
+                            'correct_answer': q.c_answer,
+                        })
+        
+        mark.got = got  # Assign the calculated got count to mark object
         mark.save()
+        
         return render(request, "quiz/result.html", {
             "mark": mark,
             "correct_answers": correct_answers,
-            "incorrect_answers": incorrect_answers
+            "incorrect_answers": incorrect_answers,
         })
 
+    
 #@method_decorator(login_required, name="dispatch")
+
 class Result(View):
-    def get(self, request):
-        results = Mark.objects.filter(user=request.user)
-        return render(request, "quiz/result.html", {"results": results})
+    def get(self, request, subject=None):
+        user_instance = request.user
+        
+        if subject:
+            # Filter questions and count total for the specific subject
+            total_questions = Question.objects.filter(subject=subject).count()
+            # Retrieve mark instance for the specific subject
+            results = Mark.objects.filter(user=user_instance, total=total_questions)
+        # else:
+            # If no subject specified, show total marks for all questions
+            # total_questions = Question.objects.count()
+            # results = Mark.objects.filter(user=user_instance, total=total_questions)
+        
+        return render(request, "quiz/result.html", {
+            "results": results,
+            "total_questions": total_questions,
+            "subject": subject  # Pass subject to template for display purposes
+        })
+
+
+
+
 
 class Leaderboard(View):
     def get(self, request):
