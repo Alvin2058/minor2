@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'fill.apps.ExercisesConfig',
     'quiz.apps.QuizConfig',
     'management.apps.ManagementConfig',
-    'login.apps.LoginConfig',
     'compiler.apps.CompilerConfig',
+    'login',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +59,7 @@ import os
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Add BASE_DIR/templates to DIRS,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Add BASE_DIR/templates to DIRS,
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,7 +125,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'login', 'templates', 'login', 'static'),
+    ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
@@ -133,6 +136,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# settings.py
+
+LOGIN_URL = '/login/login/'
+
 
 GLOBAL_SETTINGS={
     "questions":5

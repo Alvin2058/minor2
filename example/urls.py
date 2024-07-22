@@ -12,4 +12,5 @@ urlpatterns = [
     path("management/", include("management.urls")),
     path("login/", include("login.urls")),
     path('compiler/', include('compiler.urls')),
+    path('login/', include('django.contrib.auth.urls')),
 ]

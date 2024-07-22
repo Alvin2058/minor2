@@ -4,6 +4,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
+  background-image: "loginbg.jpg";
 }
 html,body{
   display: grid;
@@ -11,6 +12,7 @@ html,body{
   width: 100%;
   place-items: center;
   background: #f2f2f2;
+  
   /* background: linear-gradient(-135deg, #c850c0, #4158d0); */
 }
 ::selection{

@@ -7,7 +7,7 @@
     <title>Landing Page</title>
    
     <link rel="stylesheet" href="/static/css/styles.css">
-    
+    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
@@ -24,33 +24,32 @@
     <section id="features" class="features">
         <div class="feature-item">
             <div class="feature-section">
-                <h3>C</h3>
-                <button onclick="window.location.href='{% url 'quiz' %}'">Quiz</button>
-                <button onclick="window.location.href='{% url 'fill_latest' %}'">Fill in the blanks</button>
-                <button onclick="window.location.href='{% url 'compiler' %}'">Debug</button>
+                <h6>Quiz</h6>
+                <p><i class="fa-sharp fa-solid fa-arrows-up-down-left-right"></i>&nbspChallenge your coding knowledge with a variety of quizzes designed to test your skills.<br/> <i class="fa-sharp fa-solid fa-arrows-up-down-left-right"></i>&nbspInstant feedback on your answers to help you learn and improve.</p><br><br>
+                <button onclick="window.location.href='{% url 'quiz' %}'">Take quiz</button>
+                <!-- <button onclick="window.location.href='{% url 'fill_latest' %}'">Fill in the blanks</button>
+                <button onclick="window.location.href='{% url 'compiler' %}'">Debug</button> -->
             </div>
         </div>
         <div class="feature-item">
             <div class="feature-section">
-                <h3>Python</h3>
-                <button onclick="window.location.href='python.html'">Quiz</button>
-                <button onclick="window.location.href='fill.html'">Fill in the blanks</button>
-                <button onclick="window.location.href='debug.html'">Debug</button>
+                <h6>Fill in the blanks</h6>
+                <p><i class="fa-sharp fa-solid fa-arrows-up-down-left-right"></i>&nbspFill in the blanks in code snippets to complete functional programs.<br/><i class="fa-sharp fa-solid fa-arrows-up-down-left-right"></i>&nbspReinforce your understanding of syntax and logic through targeted practice.</p><br><br>
+                <button onclick="window.location.href='{% url 'fill_latest' %}'">Fill the blanks</button>
             </div>
         </div>
         <div class="feature-item">
             <div class="feature-section">
-                <h3>Java</h3>
-                <button onclick="window.location.href='java.html'">Quiz</button>
-                <button onclick="window.location.href='fill.html'">Fill in the blanks</button>
-                <button onclick="window.location.href='debug.html'">Debug</button>
+                <h6>Compiler</h6>
+                <p><i class="fa-sharp fa-solid fa-arrows-up-down-left-right"></i>&nbspWrite, compile, and run your code directly within the web app.<br><i class="fa-sharp fa-solid fa-arrows-up-down-left-right"></i>&nbspSupport for a variety of programming languages to suit your learning needs.</p><br><br>
+                <button onclick="window.location.href='{% url 'compiler' %}'">Compile</button>
             </div>
         </div>
     </section>
     
     <section id="cta" class="cta">
         <h2>Ready to Join?</h2>
-        <button class="c-button c-button--gooey" onclick="window.location.href='register.html'"> Sign up now
+        <button class="c-button c-button--gooey" onclick="window.location.href='{% url 'register'%}'"> Sign up now
             <div class="c-button__blobs">
             <div></div>
             <div></div>

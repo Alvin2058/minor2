@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from random import sample
 
+
+@method_decorator(login_required, name='dispatch')
 class Quiz(View):
     def get(self, request):
         subject = request.GET.get('subject', None)  # Get subject from query parameter
@@ -27,10 +29,7 @@ class Quiz(View):
         user_instance = request.user  
         subject = request.GET.get('subject', None)  # Get subject from query parameter
         
-        
-        
         total_questions = 10
-        
         
         mark = Mark(user=user_instance, total=total_questions)
         correct_answers = []
@@ -74,6 +73,12 @@ class Quiz(View):
             "correct_answers": correct_answers,
             "incorrect_answers": incorrect_answers,
         })
+    def dispatch(self, request, *args, **kwargs):
+        # Check if user is authenticated
+        if not request.user.is_authenticated:
+            messages.info(request, 'You need to log in to take the quiz.')
+            return redirect('login')  # Redirect to login page if not authenticated
+        return super().dispatch(request, *args, **kwargs)
 
     
 #@method_decorator(login_required, name="dispatch")
@@ -97,9 +102,6 @@ class Result(View):
             "total_questions": total_questions,
             "subject": subject  # Pass subject to template for display purposes
         })
-
-
-
 
 
 class Leaderboard(View):

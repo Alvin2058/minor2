@@ -1,0 +1,31 @@
+<!-- user_marks.html -->
+{% include 'header.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Marks</title>
+</head>
+<body>
+    <h1>User Marks</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Total Questions</th>
+                <th>Correct Answers</th>
+                <!-- Add more columns as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for mark in user_marks %}
+            <tr>
+                <td>{{ mark.total }}</td>
+                <td>{{ mark.got }}</td>
+                <!-- Add more columns as needed -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
