@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'fill.apps.ExercisesConfig',
     'quiz.apps.QuizConfig',
-    'management.apps.ManagementConfig',
     'compiler.apps.CompilerConfig',
     'login',
 ]

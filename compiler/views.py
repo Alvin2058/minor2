@@ -1,9 +1,9 @@
+import json
 import requests
+from django.http import JsonResponse
 from django.shortcuts import render
-import logging
 from .forms import CodeForm
-
-logger = logging.getLogger(__name__)
+from .models import compiler_question
 
 L = "https://judge0-ce.p.rapidapi.com/submissions"
 
@@ -12,74 +12,73 @@ headers = {
     'x-rapidapi-key': "5e83683b33msh9c7c3f0797f6669p178722jsn54d596782374",
     'x-rapidapi-host': "judge0-ce.p.rapidapi.com"
 }
-print("hello")
 
 def index(request):
     if request.method == 'POST':
-        form = CodeForm(request.POST) 
-        if form.is_valid():
-            language = form.cleaned_data['language']
-            code = form.cleaned_data['code']
-            
-            # Prepare the data for Judge0 API
-            data = {
-                'source_code': code,
-                'language_id': get_language_id(language)
-            }
-            
-            
-            try:
+        # Check if it's an AJAX request
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            form = CodeForm(request.POST)
+            if form.is_valid():
+                language = form.cleaned_data['language']
+                code = form.cleaned_data['code']
                 
-            
-                response = requests.post(L, json=data, headers=headers)
+                # Prepare the data for Judge0 API
+                data = {
+                    'source_code': code,
+                    'language_id': get_language_id(language)
+                }
                 
-                response.raise_for_status() 
-                 # Raise an exception for bad response status
-                
-                
-
-                
-                # Extract token if request was successful
-                if response.status_code == 201:
-                    token = response.json().get('token')
+                try:
+                    response = requests.post(L, json=data, headers=headers)
+                    response.raise_for_status()
                     
-                    if token:
-                        # Check the status of the submission
-                        result_url = f"{L}/{token}"
-                        result_response = requests.get(result_url, headers=headers)
+                    if response.status_code == 201:
+                        token = response.json().get('token')
                         
-                        # Handle the result JSON
-                        if result_response.status_code == 200:
-                            result_json = result_response.json()
-                            time = result_json.get('time')
-                            memory = result_json.get('memory')
-                            stdout = result_json.get('stdout')
-                            stderr = result_json.get('stderr')
-                            compile_output = result_json.get('compile_output')
-                            message = result_json.get('message')
+                        if token:
+                            # Check the status of the submission
+                            result_url = f"{L}/{token}"
+                            result_response = requests.get(result_url, headers=headers)
                             
-                            return render(request, 'compiler/compiler.html', {
-                                'time': time,
-                                'memory': memory,
-                                'stdout': stdout,
-                                'stderr': stderr,
-                                'compile_output': compile_output,
-                                'message': message,
-                            })
+                            # Handle the result JSON
+                            if result_response.status_code == 200:
+                                result_json = result_response.json()
+                                return JsonResponse({
+                                    'code': code,
+                                    'time': result_json.get('time'),
+                                    'memory': result_json.get('memory'),
+                                    'stdout': result_json.get('stdout'),
+                                    'stderr': result_json.get('stderr'),
+                                    'compile_output': result_json.get('compile_output'),
+                                    'message': result_json.get('message'),
+                                })
+                            else:
+                                return JsonResponse({'error': f"Failed to fetch result: {result_response.status_code}"}, status=400)
                         else:
-                            return render(request, 'compiler/compiler.html', {'error': f"Failed to fetch result: {result_response.status_code}"})
+                            return JsonResponse({'error': "Failed to get token from response"}, status=400)
                     else:
-                        return render(request, 'compiler/compiler.html', {'form': form, 'error': "Failed to get token from response"})
-                else:
-                    return render(request, 'compiler/compiler.html', {'form': form, 'error': f"Failed to submit code: {response.status_code}"})
+                        return JsonResponse({'error': f"Failed to submit code: {response.status_code}"}, status=400)
+                
+                except requests.exceptions.RequestException as e:
+                    return JsonResponse({'error': f"Error during API request: {str(e)}"}, status=400)
             
-            except requests.exceptions.RequestException as e:
-                return render(request, 'compiler/compiler.html', {'form': form, 'error': f"Error during API request: {str(e)}"})
-            
+            else:
+                return JsonResponse({'error': "Form data is not valid"}, status=400)
+        
+        else:
+            return JsonResponse({'error': "Invalid request type"}, status=400)
+    
     else:
         form = CodeForm()
     
-    return render(request, 'compiler/compiler.html', {'form': form})
+    try:
+        question_object = compiler_question.objects.first()  # Retrieve the first question object
+        question = question_object.questions if question_object else "Default Question Title"
+    except compiler_question.DoesNotExist:
+        question = "Default Question Title"
+
+
+    return render(request, 'compiler/compiler.html', {'form': form, 'question': question})
 
 def get_language_id(language):
     language_map = {
@@ -88,4 +87,3 @@ def get_language_id(language):
         'java': 62     # language_id for Java in Judge0
     }
     return language_map.get(language, 71)
-

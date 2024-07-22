@@ -15,18 +15,33 @@
             max-width: 1200px;
             margin: auto;
         }
-        .form-container {
+        .question-container {
             border: 1px solid #ddd;
             padding: 20px;
             border-radius: 5px;
             background-color: #f9f9f9;
+            margin-bottom: 20px;
         }
-        .output-container {
+        .split-pane {
+            display: flex;
+            flex-direction: row;
+        }
+        .code-area {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 70vh; /* Adjust the max height as needed */
+            padding: 10px;
+            background-color: #f5f5f5;
             border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 20px;
+        }
+        .result-area {
+            flex: 1;
             padding: 20px;
+            border: 1px solid #ddd;
             border-radius: 5px;
             background-color: #f5f5f5;
-            margin-top: 20px;
         }
         pre {
             white-space: pre-wrap;
@@ -56,57 +71,62 @@
 </head>
 <body>
     <div class="container">
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="form-container">
-                    <h1>Online Compiler</h1>
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="id_language">Select Language:</label>
-                            {{ form.language }}
-                        </div>
-                        <div class="form-group">
-                            <label for="id_code">Enter Your Code:</label>
-                            {{ form.code }}
-                        </div>
-                        <button type="submit" class="btn">Compile</button>
-                    </form>
-                    {% if error %}
-                        <p class="error-msg">{{ error }}</p>
-                    {% endif %}
-                </div>
+        <div class="question-container">
+            <h2>Solve The Question</h2>
+            <hr>
+            <p>{{ question }}<p>
+            
+        </div>
+        <div class="split-pane">
+            <div class="code-area">
+                <form id="codeForm" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_language">Select Language:</label>
+                        {{ form.language }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_code">Enter Your Code:</label>
+                        {{ form.code }}
+                    </div>
+                    <button type="submit" class="btn">Compile</button>
+                </form>
+                <p id="error-msg" class="error-msg"></p>
             </div>
-            <div class="col-lg-6">
-                <div class="output-container">
-                    {% if time or memory or stdout or stderr or compile_output or message %}
-                        <h2>Compilation Result:</h2>
-                        <div>
-                            <p><strong>Input:</strong></p>
-                            <pre>{{ form.code.value }}</pre>
-                        </div>
-                        <p><strong>Time:</strong> {{ time }}</p>
-                        <p><strong>Memory:</strong> {{ memory }}</p>
-                        <div>
-                            <p><strong>Standard Output:</strong></p>
-                            <pre>{{ stdout }}</pre>
-                        </div>
-                        <div>
-                            <p><strong>Standard Error:</strong></p>
-                            <pre>{{ stderr }}</pre>
-                        </div>
-                        <div>
-                            <p><strong>Compile Output:</strong></p>
-                            <pre>{{ compile_output }}</pre>
-                        </div>
-                        <p><strong>Message:</strong> {{ message }}</p>
-                    {% else %}
-                        <h2>Compilation Result:</h2>
-                        <p>No output yet. Compile your code to see results.</p>
-                    {% endif %}
-                </div>
+            <div class="result-area" id="result">
+                <h2>Compilation Result:</h2>
+                <p>No output yet. Compile your code to see results.</p>
             </div>
         </div>
     </div>
+
+    <!-- jQuery for AJAX handling -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#codeForm').on('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                $.ajax({
+                    type: 'POST',
+                    url: '',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.error) {
+                            $('#error-msg').text(response.error);
+                            $('#result').html('<h2>Compilation Result:</h2><p>No output yet. Compile your code to see results.</p>');
+                        } else {
+                            $('#error-msg').empty();
+                            $('#result').html('<h2>Compilation Result:</h2><div><p><strong>Input:</strong></p><pre>' + response.code + '</pre></div><p><strong>Time:</strong> ' + response.time + '</p><p><strong>Memory:</strong> ' + response.memory + '</p><div><p><strong>Standard Output:</strong></p><pre>' + response.stdout + '</pre></div><div><p><strong>Standard Error:</strong></p><pre>' + response.stderr + '</pre></div><div><p><strong>Compile Output:</strong></p><pre>' + response.compile_output + '</pre></div><p><strong>Message:</strong> ' + response.message + '</p>');
+                        }
+                    },
+                    error: function(xhr, errmsg, err) {
+                        $('#error-msg').text('Error: ' + xhr.status + ' - ' + xhr.responseText);
+                        $('#result').html('<h2>Compilation Result:</h2><p>No output yet. Compile your code to see results.</p>');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

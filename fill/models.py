@@ -7,15 +7,6 @@ class Exercise(models.Model):
     correct_answer = models.CharField(max_length=255)
     definition = models.TextField(blank=True, null=True)
 
-    SUBJECT_CHOICES = [
-        ('C', 'C'),
-        ('Python', 'Python'),
-        ('Java', 'Java'),
-        # Add more subjects as needed
-    ]
-    subject = models.CharField(max_length=50, choices=SUBJECT_CHOICES, default='Python')
-
-
     def __str__(self):
         return self.question
 

@@ -1,25 +1,20 @@
 # fill/views.py
 
-from django.shortcuts import render, get_object_or_404,render 
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from .models import Exercise, Submission
-from django.contrib import messages
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
 
+def exercise_view(request, exercise_id=None):
+    exercises = Exercise.objects.all().order_by('id')
+    current_exercise = None
+    next_exercise = None
+    prev_exercise = None
 
-@login_required
-def exercise_view(request, subject=None, exercise_id=None):
-    if subject:
-        exercises = Exercise.objects.filter(subject=subject)
+    if exercise_id is None:
+        current_exercise = get_object_or_404(Exercise, id=1)  # Default to the exercise with id 1
     else:
-        exercises = Exercise.objects.all()
-
-    if exercise_id:
-        current_exercise = get_object_or_404(exercises, id=exercise_id)
-    else:
-        current_exercise = exercises.first()
-
+        current_exercise = get_object_or_404(Exercise, id=exercise_id)
+    
     next_exercise = exercises.filter(id__gt=current_exercise.id).first()
     prev_exercise = exercises.filter(id__lt=current_exercise.id).last()
 
@@ -29,7 +24,6 @@ def exercise_view(request, subject=None, exercise_id=None):
         'prev_exercise': prev_exercise,
     }
     return render(request, 'exercise.html', context)
-
 
 def check_answer(request):
     if request.method == 'POST':
