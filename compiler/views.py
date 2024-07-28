@@ -1,12 +1,12 @@
-import json
+import random
 import requests
 from django.http import JsonResponse
 from django.shortcuts import render
 from .forms import CodeForm
 from .models import compiler_question
 
+# Judge0 API URL and headers
 L = "https://judge0-ce.p.rapidapi.com/submissions"
-
 headers = {
     "Content-Type": "application/json",
     'x-rapidapi-key': "5e83683b33msh9c7c3f0797f6669p178722jsn54d596782374",
@@ -44,13 +44,12 @@ def index(request):
                             if result_response.status_code == 200:
                                 result_json = result_response.json()
                                 return JsonResponse({
-                                    'code': code,
+                                    
                                     'time': result_json.get('time'),
                                     'memory': result_json.get('memory'),
                                     'stdout': result_json.get('stdout'),
                                     'stderr': result_json.get('stderr'),
-                                    'compile_output': result_json.get('compile_output'),
-                                    'message': result_json.get('message'),
+                                    
                                 })
                             else:
                                 return JsonResponse({'error': f"Failed to fetch result: {result_response.status_code}"}, status=400)
@@ -77,13 +76,29 @@ def index(request):
     except compiler_question.DoesNotExist:
         question = "Default Question Title"
 
-
     return render(request, 'compiler/compiler.html', {'form': form, 'question': question})
+
+def get_random_question(request):
+    if request.method == 'GET':
+        try:
+            questions = compiler_question.objects.values_list('questions', flat=True)
+            if questions:
+                question = random.choice(questions)
+                return JsonResponse({'question': question})
+            else:
+                return JsonResponse({'question': 'No questions available.'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=400)
 
 def get_language_id(language):
     language_map = {
         'python3': 71, # language_id for Python 3 in Judge0
         'cpp': 54,     # language_id for C++ in Judge0
-        'java': 62     # language_id for Java in Judge0
+        'java': 62,    # language_id for Java in Judge0
+        'php': 63,     # language_id for PHP in Judge0
+        'html': 68,    # language_id for HTML in Judge0
+        'c': 50        # language_id for C in Judge0     
     }
     return language_map.get(language, 71)

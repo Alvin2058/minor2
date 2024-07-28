@@ -1,5 +1,3 @@
-# my_app/forms.py
-
 from django import forms
 
 class CodeForm(forms.Form):
@@ -7,7 +5,10 @@ class CodeForm(forms.Form):
         ('python3', 'Python 3'),
         ('cpp', 'C++'),
         ('java', 'Java'),
+        ('c', 'C'),
+        ('php', 'PHP'),
+        ('html', 'HTML'),
     ]
 
     language = forms.ChoiceField(choices=LANGUAGE_CHOICES)
-    code = forms.CharField(widget=forms.Textarea)
+    code = forms.CharField(widget=forms.Textarea(attrs={'id': 'id_code'}))

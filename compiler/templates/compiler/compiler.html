@@ -6,6 +6,8 @@
     <title>Online Compiler</title>
     <!-- Bootstrap CSS for styling -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
     <style>
         body {
             padding: 20px;
@@ -15,33 +17,37 @@
             max-width: 1200px;
             margin: auto;
         }
-        .question-container {
+        .split-pane {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 20px;
+        }
+        .question-area {
+            flex: 1;
             border: 1px solid #ddd;
             padding: 20px;
             border-radius: 5px;
             background-color: #f9f9f9;
-            margin-bottom: 20px;
-        }
-        .split-pane {
-            display: flex;
-            flex-direction: row;
+            margin-right: 20px;
         }
         .code-area {
-            flex: 1;
+            flex: 2;
             overflow-y: auto;
-            max-height: 70vh; /* Adjust the max height as needed */
+            max-height: 60vh; /* Adjust the max height as needed */
             padding: 10px;
             background-color: #f5f5f5;
             border: 1px solid #ddd;
             border-radius: 5px;
-            margin-right: 20px;
+        }
+        textarea{
+            height: 150px;
         }
         .result-area {
-            flex: 1;
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 5px;
             background-color: #f5f5f5;
+            margin-top: 20px;
         }
         pre {
             white-space: pre-wrap;
@@ -71,13 +77,14 @@
 </head>
 <body>
     <div class="container">
-        <div class="question-container">
-            <h2>Solve The Question</h2>
-            <hr>
-            <p>{{ question }}<p>
-            
-        </div>
         <div class="split-pane">
+            <div class="question-area">
+                <h2>Solve The Question</h2>
+                <hr>
+                <hr>
+                <p id="question-text">{{ question }}</p>
+                <button id="nextQuestion" class="btn">Next Question</button>
+            </div>
             <div class="code-area">
                 <form id="codeForm" method="post">
                     {% csrf_token %}
@@ -87,23 +94,54 @@
                     </div>
                     <div class="form-group">
                         <label for="id_code">Enter Your Code:</label>
-                        {{ form.code }}
+                        <textarea id="id_code" name="code" rows="5" cols="50" required>{{ form.code.value }}</textarea>
                     </div>
                     <button type="submit" class="btn">Compile</button>
+                    <p id="error-msg" class="error-msg"></p>
                 </form>
-                <p id="error-msg" class="error-msg"></p>
             </div>
-            <div class="result-area" id="result">
-                <h2>Compilation Result:</h2>
-                <p>No output yet. Compile your code to see results.</p>
-            </div>
+        </div>
+        <div class="result-area" id="result">
+            <h2>Compilation Result:</h2>
+            <p>No output yet. Compile your code to see results.</p>
         </div>
     </div>
 
     <!-- jQuery for AJAX handling -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- CodeMirror Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/javascript/javascript.min.js"></script>
     <script>
         $(document).ready(function() {
+            var editor = CodeMirror.fromTextArea(document.getElementById('id_code'), {
+                lineNumbers: true,
+                mode: "text/x-python", // Default mode
+                indentUnit: 4,
+                indentWithTabs: true,
+                lineWrapping: true
+            });
+
+            // Update mode based on selected language
+            $('#id_language').change(function() {
+                var language = $(this).val();
+                if (language === 'python3') {
+                    editor.setOption("mode", "text/x-python");
+                } else if (language === 'cpp') {
+                    editor.setOption("mode", "text/x-c++src");
+                } else if (language === 'java') {
+                    editor.setOption("mode", "text/x-java");
+                } else if (language === 'php') {
+                    editor.setOption("mode", "application/x-httpd-php");
+                } else if (language === 'html') {
+                    editor.setOption("mode", "text/html");
+                } else if (language === 'c') {
+                    editor.setOption("mode", "text/x-csrc");
+                }
+            });
+
             $('#codeForm').on('submit', function(event) {
                 event.preventDefault(); // Prevent default form submission
 
@@ -117,12 +155,29 @@
                             $('#result').html('<h2>Compilation Result:</h2><p>No output yet. Compile your code to see results.</p>');
                         } else {
                             $('#error-msg').empty();
-                            $('#result').html('<h2>Compilation Result:</h2><div><p><strong>Input:</strong></p><pre>' + response.code + '</pre></div><p><strong>Time:</strong> ' + response.time + '</p><p><strong>Memory:</strong> ' + response.memory + '</p><div><p><strong>Standard Output:</strong></p><pre>' + response.stdout + '</pre></div><div><p><strong>Standard Error:</strong></p><pre>' + response.stderr + '</pre></div><div><p><strong>Compile Output:</strong></p><pre>' + response.compile_output + '</pre></div><p><strong>Message:</strong> ' + response.message + '</p>');
+                            $('#result').html('<h2>Compilation Result:</h2><div><p><strong>Time:</strong> ' + response.time + '</p><p><strong>Memory:</strong> ' + response.memory + '</p><div><p><strong>Standard Output:</strong></p><pre>' + response.stdout + '</pre></div><div><p><strong>Standard Error:</strong></p><pre>' + response.stderr +'</p>');
                         }
                     },
                     error: function(xhr, errmsg, err) {
                         $('#error-msg').text('Error: ' + xhr.status + ' - ' + xhr.responseText);
                         $('#result').html('<h2>Compilation Result:</h2><p>No output yet. Compile your code to see results.</p>');
+                    }
+                });
+            });
+
+            $('#nextQuestion').on('click', function() {
+                $.ajax({
+                    type: 'GET',
+                    url: '{% url "get_random_question" %}',  // URL to fetch a random question
+                    success: function(response) {
+                        if (response.question) {
+                            $('#question-text').text(response.question);
+                        } else {
+                            $('#question-text').text('No question available.');
+                        }
+                    },
+                    error: function(xhr, errmsg, err) {
+                        $('#question-text').text('Error fetching new question.');
                     }
                 });
             });
