@@ -1,63 +1,63 @@
-# fill/views.py
-
-from django.shortcuts import render, get_object_or_404
+import random
+from django.shortcuts import render
 from django.http import JsonResponse
-from .models import Exercise, Submission
+from .models import FillInTheBlankQuestion
 
-def exercise_view(request, exercise_id=None):
-    exercises = Exercise.objects.all().order_by('id')
-    current_exercise = None
-    next_exercise = None
-    prev_exercise = None
+from django.views.decorators.csrf import csrf_exempt
 
-    if exercise_id is None:
-        current_exercise = get_object_or_404(Exercise, id=1)  # Default to the exercise with id 1
-    else:
-        current_exercise = get_object_or_404(Exercise, id=exercise_id)
-    
-    next_exercise = exercises.filter(id__gt=current_exercise.id).first()
-    prev_exercise = exercises.filter(id__lt=current_exercise.id).last()
-
-    context = {
-        'exercise': current_exercise,
-        'next_exercise': next_exercise,
-        'prev_exercise': prev_exercise,
-    }
-    return render(request, 'exercise.html', context)
-
-def check_answer(request):
+@csrf_exempt
+def random_fill_in_the_blank_view(request):
     if request.method == 'POST':
-        user_input = request.POST.get('user_input')
-        exercise_id = request.POST.get('exercise_id')
+        user_input = request.POST.get('user_input', '').strip()
+        question_id = request.POST.get('question_id')
 
         try:
-            exercise = Exercise.objects.get(id=exercise_id)
-            correct_answer = exercise.correct_answer
+            question = FillInTheBlankQuestion.objects.get(id=question_id)
+        except FillInTheBlankQuestion.DoesNotExist:
+            return JsonResponse({'result': 'Invalid question.'}, status=400)
 
-            # Validate the user's input
-            if user_input == correct_answer:
-                result = 'Correct!'
-            else:
-                result = 'Incorrect!'
+        correct_answer = question.correct_answer.strip()
 
-            # Save submission record
-            submission = Submission.objects.create(
-                exercise=exercise,
-                user_input=user_input,
-                is_correct=(result == 'Correct!')
-            )
-            submission.save()
+        if user_input.lower() == correct_answer.lower():
+            result = "Correct!"
+        else:
+            result = "Incorrect, try again."
 
-            # Prepare response data
-            response_data = {
-                'result': result,
-                'definition': exercise.definition if result == 'Correct!' else ''
-            }
+        return JsonResponse({'result': result})
 
-            return JsonResponse(response_data)
+    subject = request.GET.get('subject')
+    if subject:
+        questions = FillInTheBlankQuestion.objects.filter(subject=subject)
+        if questions.exists():
+            question = random.choice(questions)
+            return render(request, 'fill/fill_in_the_blank.html', {'question': question})
+        else:
+            return render(request, 'fill/no_questions.html')
+    
+    return render(request, 'fill/fill_in_the_blank.html', {'question': None})
 
-        except Exercise.DoesNotExist:
-            result = 'Error: Exercise not found.'
-            return JsonResponse({'result': result}, status=404)
+def fetch_next_question(request):
+    subject = request.GET.get('subject')
+    if subject:
+        questions = FillInTheBlankQuestion.objects.filter(subject=subject)
+        if not questions.exists():
+            return JsonResponse({'error': 'No more questions available.'}, status=404)
 
-    return JsonResponse({'error': 'Invalid request method'})
+        question = random.choice(questions)
+        question_data = {
+            'id': question.id,
+            'question_definition': question.question_definition,
+            'question_text': question.question_text,
+        }
+        return JsonResponse(question_data)
+    
+    return JsonResponse({'error': 'Subject not provided.'}, status=400)
+
+def fetch_hint(request):
+    question_id = request.GET.get('question_id')
+    try:
+        question = FillInTheBlankQuestion.objects.get(id=question_id)
+        hint = question.hint
+        return JsonResponse({'hint': hint})
+    except FillInTheBlankQuestion.DoesNotExist:
+        return JsonResponse({'error': 'Question not found'}, status=404)

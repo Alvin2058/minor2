@@ -1,0 +1,194 @@
+{% include 'header.html'%}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fill blanks</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .form-container {
+            max-width: 50%;
+            margin: auto;
+        }
+        .form-control {
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+        }
+        .btn-sm {
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+        }
+        .small-feedback {
+            font-size: 0.875rem;
+            padding: 0.5rem;
+        }
+        .hint {
+            font-size: 0.875rem;
+            padding: 0.375rem;
+            display: none;
+            background-color: #f0f8ff;
+            color: #333;
+            border: 1px solid #d1e7dd;
+            border-radius: 0.25rem;
+        }
+    </style>
+    <script>
+        function submitAnswer() {
+            var user_input = document.getElementById('user_input').value.trim();
+            var question_id = document.getElementById('question_id').value;
+            var xhr = new XMLHttpRequest();
+            var url = window.location.pathname;
+
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        try {
+                            console.log('Response Text:', xhr.responseText); // Log the full response text
+                            var json = JSON.parse(xhr.responseText);
+                            var resultElement = document.getElementById('result');
+                            resultElement.innerText = json.result;
+                            if (json.result === 'Correct!') {
+                                resultElement.className = 'alert alert-success small-feedback';
+                            } else {
+                                resultElement.className = 'alert alert-danger small-feedback';
+                            }
+                        } catch (e) {
+                            console.error('Error parsing response:', e);
+                            console.log('Response Text:', xhr.responseText); // Log the full response text
+                            document.getElementById('result').innerText = 'Error parsing response.';
+                            document.getElementById('result').className = 'alert alert-warning small-feedback';
+                        }
+                    } else {
+                        console.error('Request failed. Status: ' + xhr.status);
+                        document.getElementById('result').innerText = 'Request failed. Status: ' + xhr.status;
+                        document.getElementById('result').className = 'alert alert-warning small-feedback';
+                    }
+                }
+            };
+
+            xhr.send('user_input=' + encodeURIComponent(user_input) + '&question_id=' + encodeURIComponent(question_id));
+        }
+
+        function fetchNextQuestion() {
+            var subject = document.getElementById('subject').value;
+            var xhr = new XMLHttpRequest();
+            var url = window.location.pathname + 'next/?subject=' + encodeURIComponent(subject);
+
+            xhr.open('GET', url, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        try {
+                            var json = JSON.parse(xhr.responseText);
+                            document.getElementById('question_definition').innerText = json.question_definition;
+                            document.getElementById('question_text').innerText = json.question_text;
+                            document.getElementById('question_id').value = json.id;
+                            document.getElementById('user_input').value = '';
+                            document.getElementById('result').innerText = '';
+                            document.getElementById('result').className = '';
+                            document.getElementById('hint').innerText = '';
+                            document.getElementById('hint').style.display = 'none';
+                            document.getElementById('question-section').style.display = 'block';
+                        } catch (e) {
+                            console.error('Error parsing response:', e);
+                        }
+                    } else {
+                        console.error('Request failed. Status: ' + xhr.status);
+                    }
+                }
+            };
+
+            xhr.send();
+        }
+
+        function fetchHint() {
+            var question_id = document.getElementById('question_id').value;
+            var xhr = new XMLHttpRequest();
+            var url = window.location.pathname + 'hint/?question_id=' + encodeURIComponent(question_id);
+
+            xhr.open('GET', url, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        try {
+                            var json = JSON.parse(xhr.responseText);
+                            var hintElement = document.getElementById('hint');
+                            hintElement.innerText = json.hint;
+                            hintElement.style.display = 'block';
+                        } catch (e) {
+                            console.error('Error parsing response:', e);
+                        }
+                    } else {
+                        console.error('Request failed. Status: ' + xhr.status);
+                    }
+                }
+            };
+
+            xhr.send();
+        }
+
+        function loadInitialQuestions() {
+            var subject = document.getElementById('subject').value;
+            if (subject) {
+                fetchNextQuestion();
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="form-container">
+            <!-- Subject Selection -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="subject">Select Subject:</label>
+                        <select id="subject" name="subject" class="form-control" onchange="fetchNextQuestion()">
+                            <option value="" disabled selected>Subject</option>
+                            <option value="C">C</option>
+                            <option value="Java">Java</option>
+                            <option value="Python">Python</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Form -->
+            <div class="card">
+                <div class="card-body">
+                    <div style="background-color: aqua;"><h3>Exercises</h3></div>
+                    <form method="post" onsubmit="return false;">
+                        {% csrf_token %}
+                        <div id="question-section" style="display: none;">
+                            <div class="form-group">
+                                <p><strong id="question_definition"></strong></p>
+                                <p id="question_text"></p>
+                                <input type="hidden" id="question_id" name="question_id">
+                                <input type="text" id="user_input" name="user_input" class="form-control form-control-sm" placeholder="Write your code here">
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="submitAnswer()">Submit</button>
+                                    <button type="button" class="btn btn-secondary btn-sm" onclick="fetchNextQuestion()">Next</button>
+                                </div>
+                                <button type="button" class="btn btn-info btn-sm" onclick="fetchHint()">Hint</button>
+                            </div>
+                            <p id="result" class="mt-3 small-feedback"></p>
+                            <p id="hint" class="mt-3 hint"></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

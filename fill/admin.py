@@ -1,19 +1,9 @@
+# fill admin.py
 from django.contrib import admin
-from .models import Exercise
+from .models import FillInTheBlankQuestion
 
-@admin.register(Exercise)
-class ExerciseAdmin(admin.ModelAdmin):
-    list_display = ('question', 'correct_answer', 'definition')
-    search_fields = ('question', 'correct_answer')
-    list_filter = ('correct_answer',)
-
-    fieldsets = (
-        (None, {
-            'fields': ('question', 'correct_answer')
-        }),
-        ('Additional Info', {
-            'fields': ('definition',),
-            'classes': ('collapse',)  # Optional: Hide this section by default
-        }),
-    )
-
+@admin.register(FillInTheBlankQuestion)
+class FillInTheBlankQuestionAdmin(admin.ModelAdmin):
+    list_display = ('question_text', 'correct_answer', 'question_definition', 'hint', 'subject')
+    search_fields = ('question_text', 'correct_answer', 'question_definition', 'hint', 'subject')
+    fields = ('question_text', 'correct_answer', 'question_definition', 'hint', 'subject')
