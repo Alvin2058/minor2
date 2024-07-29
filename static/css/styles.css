@@ -48,27 +48,41 @@ body {
 
 }
 
-.paste-buttons {
-    margin: 0;
-    display: flex;
-    gap: 20px; /* Adjust the gap between buttons as needed */
-    justify-content: center; /* Center the buttons horizontally */
-    position: fixed;
-    top: 58px; 
-    /* Adjust this value based on the height of the navbar */
-    width: 100%;
-    background-color: #fff; /* Optional: to make the background of buttons visible */
-    /* padding: 10px 0; */
-    z-index: 1000; /* Ensure it appears above other content */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional: to add a shadow for better visibility */
+.custom-dropdown {
+    position: relative; 
 }
 
-.paste-button {
-    /* height: 30px; */
-    position: relative;
-    display: block;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.custom-dropdown-menu {
+    background-color: #f8f9fa; 
+    border: 1px solid #dee2e6; 
+    border-radius: .25rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    padding: 0.5rem 0;
+    display: none;
+    position: absolute;
+    top: 100%; 
+    left: 0;
 }
+
+.custom-dropdown:hover .custom-dropdown-menu {
+    display: block;
+}
+
+
+.custom-dropdown-menu .dropdown-item {
+    color: #5798de; 
+    padding: 8px 10px;
+    text-decoration: none; 
+    display: block;
+    transition: 0.1s;
+}
+
+.custom-dropdown-menu .dropdown-item:hover,
+.custom-dropdown-menu .dropdown-item:focus {
+    background-color: #034f84; 
+    color: #fff; 
+}
+
 
 .button {
     background-color: #fff;
@@ -83,51 +97,6 @@ body {
     height: 35px; 
 }
 
-.dropdown-content {
-    display: none;
-    font-size: 13px;
-    position: absolute;
-    z-index: 1;
-    min-width: 200px;
-    background-color: #4b87b1;
-    border: 2px solid #000;
-    border-radius: 0px 15px 15px 15px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-}
-
-.dropdown-content a {
-    color: #000;
-    padding: 8px 10px;
-    text-decoration: none;
-    display: block;
-    transition: 0.1s;
-}
-
-.dropdown-content a:hover {
-    background-color: #fff;
-    color: #212121;
-}
-
-.dropdown-content a:focus {
-    background-color: #212121;
-    color: #fff;
-}
-
-.dropdown-content #top:hover {
-    border-radius: 8px;
-}
-
-.dropdown-content #bottom:hover {
-    border-radius: 8px;
-}
-
-.paste-button:hover button {
-    border-radius: 8px;
-}
-
-.paste-button:hover .dropdown-content {
-    display: block;
-}
 .navbar-nav{
     margin-left: 20px;
 }

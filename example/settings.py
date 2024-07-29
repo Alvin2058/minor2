@@ -143,3 +143,6 @@ LOGIN_URL = '/login/login/'
 GLOBAL_SETTINGS={
     "questions":5
 }
+# media file settings
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

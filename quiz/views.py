@@ -79,6 +79,17 @@ class Quiz(View):
             messages.info(request, 'You need to log in to take the quiz.')
             return redirect('login')  # Redirect to login page if not authenticated
         return super().dispatch(request, *args, **kwargs)
+    
+@method_decorator(login_required, name="dispatch")   
+class History(View):
+    def get(self, request):
+        user_instance = request.user
+        # Get all Mark instances for the user, ordered by timestamp
+        history = Mark.objects.filter(user=user_instance).order_by('-timestamp')
+        
+        return render(request, "quiz/history.html", {
+            "history": history
+        })
 
     
 #@method_decorator(login_required, name="dispatch")

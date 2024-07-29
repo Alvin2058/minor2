@@ -1,5 +1,6 @@
 #quiz models.py
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import User
 
 class Question(models.Model):
@@ -29,7 +30,8 @@ class Question(models.Model):
 class Mark(models.Model):
     total = models.IntegerField(blank=False)
     got = models.IntegerField(blank=False, default=0)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,related_name='quiz_marks')
+    timestamp = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"Mark({self.got}/{self.total}, {self.user})"

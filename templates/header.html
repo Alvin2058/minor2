@@ -6,70 +6,48 @@
     <title></title>
     <!-- {% load static %} -->
     <link rel="stylesheet" href="/static/css/styles.css">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </head>
 <body>
     <header class="header">
-        <nav class="navbar navbar-expand-lg fixed-top">
+        <nav class="navbar navbar-expand-lg fixed-top" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)">
             <div class="container">
                 <a class="navbar-brand" href="{% url 'home' %}"><img src="/static/images/logo.png" alt="logo" class="logo" height="40px" width="180px"></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div class="d-flex mx-auto">
-                    <div class="navbar-nav">
-                        <a class="nav-link" aria-current="page" href="#">Home</a>
-                        <a class="nav-link" href="flex.html">Features</a>
-                        <a class="nav-link" href="aboutus.html">About Us</a>
-                        <a class="nav-link" href="contact.html">Contact</a>
-                        <a class="nav-link" href="#">Upgrade</a>
-                    </div>
-                </div>
-                    <div class="ms-auto">
-                        <form class="d-flex" role="search">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                            <button class="btn btn-outline-success search-btn" type="submit">Search</button>
-                        </form>
-                        
-                    </div>
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'logout' %}" class="btn btn-outline-success search-btn">Logout</a>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-outline-success search-btn">Login</a>
-                    {% endif %}
+                    <div class="navbar-nav mx-auto">
+                        <a class="nav-link" aria-current="page" href="{% url 'home' %}">Home</a>
+                        <li class="nav-item dropdown custom-dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Features&nbsp;<i class="fa-solid fa-circle-chevron-down" style="color: #034f84;"></i>
 
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{% url 'quiz' %}">Quiz</a></li>
+                                <li><a class="dropdown-item" href="{% url 'random_fill_in_the_blank' %}">Fill in the blanks</a></li>
+                                <li><a class="dropdown-item" href="{% url 'compiler' %}">Run code</a></li>
+                            </ul>
+                        </li>
+                        <a class="nav-link" href="#">About Us</a>
+                        <a class="nav-link" href="#">Contact</a>
+                    </div>
+                    <!-- Right-Aligned Buttons -->
+                    <div class="ms-auto d-flex align-items-center">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'logout' %}" class="btn btn-outline-success me-2">Logout</a>
+                            <a href="{% url 'profile' %}" class="btn btn-outline-success me-2">View Profile <i class="fa-solid fa-user"></i></a>
+                        {% else %}
+                            <a href="{% url 'register' %}" class="btn btn-outline-success me-2">Sign Up&nbsp;<i class="fa-solid fa-user-plus"></i></a>
+                            <a href="{% url 'login' %}" class="btn btn-outline-success">Login&nbsp;<i class="fa-solid fa-arrow-right-to-bracket"></i></a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </nav>
-        <div class="paste-buttons">
-            <!-- <div class="paste-button">
-                <button class="button">C &nbsp; ▼</button>
-                <div class="dropdown-content">
-                    <a id="top" href="{% url 'quiz' %}">Quiz</a>
-                    <a id="middle" href="{% url 'random_fill_in_the_blank' %}">Fill in the blanks</a>
-                    <a id="bottom" href="#">Debug</a>
-                </div>
-            </div> -->
-            <div class="paste-button">
-                <button class="button"><h7>Features</h7>&nbsp; ▼</button>
-                <div class="dropdown-content">
-                    <a id="top" href="{% url 'quiz' %}">Quiz</a>
-                    <a id="middle" href="{% url 'random_fill_in_the_blank' %}">Fill in the blanks</a>
-                    <a id="bottom" href="{% url 'compiler' %}">Debug</a>
-                </div>
-            </div>
-            <!-- <div class="paste-button">
-                <button class="button">Java &nbsp; ▼</button>
-                <div class="dropdown-content">
-                    <a id="top" href="{% url 'quiz' %}">Quiz</a>
-                    <a id="middle" href="{% url 'random_fill_in_the_blank' %}">Fill in the blanks</a>
-                    <a id="bottom" href="#">Debug</a>
-                </div>
-            </div> -->
-        </div>
     </header>
-    
+</body>
+</html>

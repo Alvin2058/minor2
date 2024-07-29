@@ -1,10 +1,12 @@
-#login views.py
-
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import login,logout
+from django.contrib.auth import login, logout
 from django.contrib import messages
 from django.contrib.auth import authenticate
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from .forms import ProfileForm, UserUpdateForm
+from quiz.models import Mark 
 
 def login_view(request):
     if request.method == 'POST':
@@ -15,16 +17,19 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            # If authentication successful, log in the user
             login(request, user)
 
-            # Check if the logged-in user is an admin
+            # Redirect to the next page if 'next' parameter is in the request
+            next_url = request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
+
             if user.is_superuser:
                 # Redirect to admin-specific page or dashboard
-                return redirect('admin:index')  # Replace with your admin URL name
+                return redirect(reverse('admin:index'))  # Replace with your admin URL name
             else:
                 # Redirect to the home page or user-specific page
-                return redirect('home')  # Replace with your desired URL name
+                return redirect(reverse('home'))  # Replace with your desired URL name
         else:
             # If authentication fails, display error message
             messages.error(request, 'Invalid username or password.')
@@ -34,9 +39,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('home')
-
-
+    return redirect(reverse('home'))
 
 def register_view(request):
     if request.method == 'POST':
@@ -61,6 +64,32 @@ def register_view(request):
 
             messages.success(request, "Registration successful. Please log in.")
 
-            return redirect('login')  
+            return redirect(reverse('login'))  # Replace with your login URL name
 
     return render(request, 'login/register.html')
+
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        user_form = UserUpdateForm(instance=request.user, data=request.POST)
+        profile_form = ProfileForm(instance=request.user.profile, data=request.POST, files=request.FILES)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect('profile')
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    }
+    return render(request, 'login/profile.html', context)
+
+@login_required
+def quiz_history_view(request):
+    history = Mark.objects.filter(user=request.user).order_by('-timestamp')
+    return render(request, 'login/history_table.html', {
+        'history': history
+    })

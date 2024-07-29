@@ -1,0 +1,125 @@
+<!-- login/templates/login/profile.html -->
+{% include 'header.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Form Column -->
+        <div class="col-md-4">
+            <div class="card border-info mb-3" style="max-width: 45rem;height: 700px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)">
+                <div class="card-body">
+                    <h3 class="mb-4 text-center">User Profile</h3>
+                    
+                    <div class="profile-picture-container mb-4 text-center">
+                        {% if user.profile.profile_picture %}
+                            <div class="profile-picture-wrapper">
+                                <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" class="profile-picture">
+                            </div>
+                        {% else %}
+                            <div class="profile-picture-wrapper">
+                                <img src="" alt="Default Profile Picture" class="profile-picture">
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {{ user_form.non_field_errors }}
+                            <div class="form-group">
+                                {{ user_form.first_name.label_tag }} {{ user_form.first_name }}
+                                {{ user_form.first_name.errors }}
+                            </div>
+                            <div class="form-group">
+                                {{ user_form.last_name.label_tag }} {{ user_form.last_name }}
+                                {{ user_form.last_name.errors }}
+                            </div>
+                            <div class="form-group">
+                                {{ user_form.email.label_tag }} {{ user_form.email }}
+                                {{ user_form.email.errors }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ profile_form.non_field_errors }}
+                            <div class="form-group">
+                                {{ profile_form.profile_picture.label_tag }}
+                                {{ profile_form.profile_picture }}
+                                {{ profile_form.profile_picture.errors }}
+                            </div>
+                            <div class="form-group">
+                                {{ profile_form.bio.label_tag }} {{ profile_form.bio }}
+                                {{ profile_form.bio.errors }}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary custom-btn">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h1 class="mb-4" >Quiz History</h1>
+            <button id="load-history" class="btn btn-primary custom-btn">Load Quiz History</button>
+            <div id="quiz-history" class="mt-4">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+document.getElementById('load-history').addEventListener('click', function() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '{% url "quiz_history" %}', true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            document.getElementById('quiz-history').innerHTML = xhr.responseText;
+        }
+    };
+    xhr.send();
+});
+</script>
+
+<style>
+.profile-picture-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-picture-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 120px;
+    height: 120px; 
+    background-color: rgba(218, 236, 201, 0.792); 
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.profile-picture {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+}
+.custom-btn {
+    margin: 2px;
+    color: #fff;
+    background-color: #034f84;
+    border-color: #000;
+}
+
+.custom-btn:hover {
+    color: #4b87b1;
+    background-color: #333;
+    border-color: #333;
+}
+
+</style>
+
+{% endblock %}
