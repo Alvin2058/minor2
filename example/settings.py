@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -146,3 +148,11 @@ GLOBAL_SETTINGS={
 # media file settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+JAZZMIN_SETTINGS = { 
+    "site_header": "EzCode",  # Change the site header
+    "site_brand":"EzCode", # Change the site brand
+    # "site_logo": "static/images/user.png",  # Optional logo image
+    "copyright": "EzCode",
+    # Add other configurations as needed
+}
