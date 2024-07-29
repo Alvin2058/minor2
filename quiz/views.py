@@ -40,7 +40,7 @@ class Quiz(View):
             if key.startswith('q_id_'):  # Check for keys starting with 'q_id_'
                 q_id = key.split('_')[-1]  # Extract question ID from key
                 selected_option = request.POST.get(f'q_answer_{q_id}')  # Get selected answer based on question ID
-                q = Question.objects.filter(pk=q_id, verified=True).first()
+                q = Question.objects.filter(pk=q_id).first()
                 if q:
                     selected_option_text = ""
                     if selected_option == 'A':
