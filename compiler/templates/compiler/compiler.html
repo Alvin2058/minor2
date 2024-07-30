@@ -40,7 +40,7 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        textarea{
+        textarea {
             height: 150px;
         }
         .result-area {
@@ -83,9 +83,8 @@
             <div class="question-area">
                 <h2>Solve The Question</h2>
                 <hr>
-                <hr>
                 <p id="question-text">{{ question }}</p>
-                <button id="nextQuestion" class="btn">Next Question</button>
+                <button id="nextQuestion" class="btn btn-primary">Next Question</button>
             </div>
             <div class="code-area">
                 <form id="codeForm" method="post">
@@ -98,7 +97,7 @@
                         <label for="id_code">Enter Your Code:</label>
                         <textarea id="id_code" name="code" rows="5" cols="50" required>{{ form.code.value }}</textarea>
                     </div>
-                    <button type="submit" class="btn">Compile</button>
+                    <button type="submit" class="btn btn-primary">Compile</button>
                     <p id="error-msg" class="error-msg"></p>
                 </form>
             </div>
