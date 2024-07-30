@@ -14,7 +14,7 @@
 <body>
     <div class="header-content">
         <h1>Welcome to EZCode!</h1>
-        <h4 class="typewtext">Explore your passion for programming through interactive quizzes, debugging, and fill-in-the-blank challenges.</h4>
+        <h4 class="typewtext">Explore your passion for programming through interactive quizzes, challenges, and fill-in-the-blanks.</h4>
         <!-- <a href="#cta" class="btn">Get Started</a> -->
     </div>
     
@@ -46,10 +46,10 @@
             </div>
         </div>
     </section>
-    
+    {% if user.is_authenticated %}
     <section id="cta" class="cta">
-        <h2>Ready to Learn?</h2>
-        <button class="c-button c-button--gooey" onclick="window.location.href='{% url 'register'%}'"> Sign up now
+        <h2>Explore premium?</h2>
+        <button class="c-button c-button--gooey" onclick="window.location.href=''"> Upgrade
             <div class="c-button__blobs">
             <div></div>
             <div></div>
@@ -67,6 +67,28 @@
             </defs>
           </svg>
     </section>
+    {%else%}
+    <section id="cta" class="cta">
+        <h2>Ready to Learn?</h2>
+        <button class="c-button c-button--gooey" onclick="window.location.href='{%url 'register'%}'"> Sign Up
+            <div class="c-button__blobs">
+            <div></div>
+            <div></div>
+            
+            <div></div>
+            </div>
+          </button>
+          <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: block; height: 0; width: 0;">
+            <defs>
+              <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"></feGaussianBlur>
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo"></feColorMatrix>
+                <feBlend in="SourceGraphic" in2="goo"></feBlend>
+              </filter>
+            </defs>
+          </svg>
+    </section>
+    {%endif%}
     
 </body>
 </html>
