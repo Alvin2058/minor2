@@ -8,7 +8,9 @@ from . import views  # Import views from the current directory
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", views.home, name='home'),  # Maps root URL to home view
+    path("", views.home, name='home'),
+    path("aboutus/", views.aboutus, name='aboutus'),
+     path("contactus/", views.contactus, name='contactus'), # Maps root URL to home view
     path("fill/", include('fill.urls')),
     path("quiz/", include("quiz.urls")),
     path("login/", include("login.urls")),
