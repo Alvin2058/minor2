@@ -9,8 +9,7 @@ class Question(models.Model):
     option2 = models.CharField(blank=False, max_length=150)
     option3 = models.CharField(blank=False, max_length=150)
     option4 = models.CharField(blank=False, max_length=150)
-    correct_option = models.CharField(max_length=1, blank=False)
-    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    correct_option = models.CharField(max_length=1, blank=False)   
     c_answer = models.CharField(max_length=250, blank=False) 
 
     # Define choices for subject field
@@ -18,13 +17,12 @@ class Question(models.Model):
         ('C', 'C'),
         ('Python', 'Python'),
         ('Java', 'Java'),
-        # Add more subjects as needed
     ]
 
     subject = models.CharField(max_length=50, choices=SUBJECT_CHOICES,default="Python")
 
     def __str__(self):
-        return f"Question({self.question}, {self.creator})"
+        return f"Question({self.question}"
 
 class Mark(models.Model):
     total = models.IntegerField(blank=False)

@@ -2,12 +2,12 @@ from django import forms
 
 class CodeForm(forms.Form):
     LANGUAGE_CHOICES = [
-        ('python3', 'Python 3'),
-        ('cpp', 'C++'),
+        ('python3', 'Python'),
+        # ('cpp', 'C++'),
         ('java', 'Java'),
         ('c', 'C'),
-        ('php', 'PHP'),
-        ('html', 'HTML'),
+        # ('php', 'PHP'),
+        # ('html', 'HTML'),
     ]
 
     language = forms.ChoiceField(choices=LANGUAGE_CHOICES)
