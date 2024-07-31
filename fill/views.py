@@ -18,7 +18,7 @@ def random_fill_in_the_blank_view(request):
 
         correct_answer = question.correct_answer.strip()
 
-        if user_input.lower() == correct_answer.lower():
+        if user_input == correct_answer:
             result = "Correct!"
         else:
             result = "Incorrect, try again."
