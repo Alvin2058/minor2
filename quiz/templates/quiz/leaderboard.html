@@ -1,17 +1,17 @@
 {% include "header.html" %}
 
 {% block content %}
-  <h2>Leaderboard</h2>
+  <h2 style="text-align: center;">Leaderboard</h2>
 
   <style>
     .first {
-      background-color: gold; /* Gold color for the top rank */
-      color: black; /* Ensure text is readable on gold */
+      background-color: gold; 
+      color: black; 
     }
 
     .second {
-      background-color: silver; /* Silver color for the second rank */
-      color: black; /* Ensure text is readable on silver */
+      background-color: silver; 
+      color: black; 
     }
 
     .third {
@@ -19,18 +19,39 @@
       color: white; /* Ensure text is readable on bronze */
     }
 
-    .table td, .table th {
-      padding: 8px; 
-      text-align: left; 
-    }
-
     .table {
-      width: 100%; /* Ensure table takes full width */
+      width: 60%; /* Adjust width to make the table smaller */
+      margin: 0 auto; /* Center the table horizontally */
       border-collapse: collapse; /* Ensure borders are collapsed */
     }
 
     .table th, .table td {
-      border: 1px solid #ddd; /* Add border to table cells */
+      border: 1px solid blue; /* Set border color to blue */
+      padding: 8px; 
+      text-align: left; 
+    }
+
+    .table th {
+      background-color: #034f84; /* Background color for table headers */
+      color: white; /* Ensure text is readable on header background */
+    }
+
+    .rank-icon {
+      font-family: "Font Awesome 5 Free"; /* Ensure FontAwesome icons are used */
+      font-weight: 900; /* Bold weight for solid icons */
+      color: gold; /* Default color for icons */
+    }
+
+    .first .rank-icon {
+      color: gold; /* Gold color for first place */
+    }
+
+    .second .rank-icon {
+      color: silver; /* Silver color for second place */
+    }
+
+    .third .rank-icon {
+      color: #cd7f32; /* Bronze color for third place */
     }
   </style>
 
@@ -46,7 +67,17 @@
     <tbody>
       {% for score in top_scores %}
         <tr class="{% if forloop.first %}first{% elif forloop.counter == 2 %}second{% elif forloop.counter == 3 %}third{% endif %}">
-          <td>{{ forloop.counter }}</td>
+          <td>
+            {% if forloop.first %}
+              <i class="rank-icon fas fa-medal"></i>
+            {% elif forloop.counter == 2 %}
+              <i class="rank-icon fas fa-medal"></i>
+            {% elif forloop.counter == 3 %}
+              <i class="rank-icon fas fa-medal"></i>
+            {% else %}
+              {{ forloop.counter }}
+            {% endif %}
+          </td>
           <td>{{ score.username }}</td>
           <td>
             {% if score.user_id == request.user.id %}

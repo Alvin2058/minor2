@@ -1,7 +1,40 @@
 {% include "header.html" %}
 
 {% block content %}
-  <h2>Quiz History for {{ user.username }}</h2>
+  <h2 style="text-align: center;">Quiz History for {{ user.username }}</h2>
+  <style>
+    .first {
+      background-color: gold; 
+      color: black; 
+    }
+
+    .second {
+      background-color: silver; 
+      color: black; 
+    }
+
+    .third {
+      background-color: #cd7f32; /* Bronze color for the third rank */
+      color: white; /* Ensure text is readable on bronze */
+    }
+
+    .table {
+      width: 60%; /* Adjust width to make the table smaller */
+      margin: 0 auto; /* Center the table horizontally */
+      border-collapse: collapse; /* Ensure borders are collapsed */
+    }
+
+    .table th, .table td {
+      border: 1px solid blue; /* Set border color to blue */
+      padding: 8px; 
+      text-align: left; 
+    }
+
+    .table th {
+      background-color: #034f84; /* Background color for table headers */
+      color: white; /* Ensure text is readable on header background */
+    }
+    </style>
   
   <table class="table">
     <thead>
