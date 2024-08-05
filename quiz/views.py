@@ -1,5 +1,5 @@
 # quiz/views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.views import View
 from .models import Question, Mark, AttemptedQuestion
 from django.contrib import messages
@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from random import sample
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
+from django.views.generic import TemplateView
 
 @method_decorator(login_required, name='dispatch')
 class Quiz(View):
@@ -111,17 +112,14 @@ class Result(View):
 
 class Leaderboard(View):
     def get(self, request):
-        # Aggregate total questions and total score for each user
         user_scores = Mark.objects.values('user').annotate(
             total_questions=Sum('total'),
             total_scored=Sum('got')
         ).order_by('-total_scored')[:10]
 
-        # Fetch user instances to display usernames
         user_ids = [score['user'] for score in user_scores]
         users = {user.id: user for user in get_user_model().objects.filter(id__in=user_ids)}
 
-        # Prepare data for rendering
         top_scores = []
         for score in user_scores:
             user = users.get(score['user'])
@@ -129,6 +127,31 @@ class Leaderboard(View):
                 'username': user.username if user else 'Unknown',
                 'total_questions': score['total_questions'],
                 'total_scored': score['total_scored'],
+                'user_id': user.id if user else None,
             })
 
         return render(request, "quiz/leaderboard.html", {"top_scores": top_scores})
+    
+class UserHistory(View):
+    def get(self, request, user_id):
+        user = get_object_or_404(get_user_model(), id=user_id)
+        # Fetch all marks for the user
+        user_marks = Mark.objects.filter(user=user)
+        # Get all attempted questions for the user
+        attempted_questions = AttemptedQuestion.objects.filter(user=user).select_related('question').distinct()
+
+        # Create a dictionary to map question IDs to questions and correct answers
+        questions_with_answers = {}
+        for attempted in attempted_questions:
+            question = attempted.question
+            questions_with_answers[question.id] = {
+                'question': question.question,
+                'correct_answer': question.c_answer
+            }
+        
+        context = {
+            'user': user,
+            'questions_with_answers': questions_with_answers,
+            'user_marks': user_marks
+        }
+        return render(request, 'quiz/user_history.html', context)

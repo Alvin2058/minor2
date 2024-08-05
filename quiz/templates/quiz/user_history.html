@@ -1,0 +1,22 @@
+{% include "header.html" %}
+
+{% block content %}
+  <h2>Quiz History for {{ user.username }}</h2>
+  
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Question</th>
+        <th>Correct Answer</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for question_id, question_data in questions_with_answers.items %}
+        <tr>
+          <td>{{ question_data.question }}</td>
+          <td>{{ question_data.correct_answer }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

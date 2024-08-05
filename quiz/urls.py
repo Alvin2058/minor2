@@ -1,5 +1,6 @@
 #quiz urls.py
 from django.urls import path
+from .views import Leaderboard, UserHistory
 from . import views
 
 urlpatterns = [
@@ -8,4 +9,5 @@ urlpatterns = [
     path('history/', views.History.as_view(), name='history'),
     path("result/", views.Result.as_view(), name="result"),
     path("leaderboard/", views.Leaderboard.as_view(), name="leaderboard"),
+    path('history/<int:user_id>/', UserHistory.as_view(), name='user_history'),
 ]
