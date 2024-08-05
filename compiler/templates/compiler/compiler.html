@@ -125,22 +125,20 @@
                 lineWrapping: true
             });
 
+            const languageModes = {
+                'python3': 'text/x-python',
+                'cpp': 'text/x-c++src',
+                'java': 'text/x-java',
+                'php': 'application/x-httpd-php',
+                'html': 'text/html',
+                'c': 'text/x-csrc'
+            };
+
             // Update mode based on selected language
             $('#id_language').change(function() {
                 var language = $(this).val();
-                if (language === 'python3') {
-                    editor.setOption("mode", "text/x-python");
-                } else if (language === 'cpp') {
-                    editor.setOption("mode", "text/x-c++src");
-                } else if (language === 'java') {
-                    editor.setOption("mode", "text/x-java");
-                } else if (language === 'php') {
-                    editor.setOption("mode", "application/x-httpd-php");
-                } else if (language === 'html') {
-                    editor.setOption("mode", "text/html");
-                } else if (language === 'c') {
-                    editor.setOption("mode", "text/x-csrc");
-                }
+                var mode = languageModes[language] || 'text/plain';
+                editor.setOption("mode", mode);
             });
 
             $('#codeForm').on('submit', function(event) {
